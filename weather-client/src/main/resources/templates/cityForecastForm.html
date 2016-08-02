@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="base">
+<head>
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+    	
+	    var cityForecastUrl = [[@{/app/weather/forecast/city/view}]];       
+	           
+		function getCityForecast(){
+			
+			var zip = $("#zip").val();
+			if(zip == null || $.trim(zip).length <= 0){
+				alert("Select a city");
+				return;
+			}
+			
+			window.location.href = cityForecastUrl+"?zip="+zip;
+		
+		}                  
+    	
+	/*]]>*/	
+	</script>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="row">
+			<div class="col-md-6">
+				<form id="form1" class="form-horizontal">
+					<section class="panel">
+						<header class="panel-heading">
+							<div class="panel-actions">
+								<a href="#" class="fa fa-caret-down"></a>
+								<a href="#" class="fa fa-times"></a>
+							</div>
+							<h2 class="panel-title">City Forecast</h2>
+							<p class="panel-subtitle">Get city forecast details</p>
+						</header>
+						<div class="panel-body">
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Your City : </label>
+								<div class="col-sm-6">
+									<select id="zip" class="form-control">
+										<option value="">Select City</option>
+										<option th:each="city : ${cities}" th:value="${city.cityZip}" th:text="${city.cityName}"></option>	
+									</select>
+								</div>
+							</div>
+						</div>
+						<footer class="panel-footer">
+							<button class="btn btn-primary" type="button" onclick="getCityForecast()">Get Forecast</button>
+							<button type="reset" class="btn btn-default">Reset</button>
+						</footer>
+					</section>
+				</form>
+			</div>
+			<div class="col-md-6" th:if="${forecast != null}">
+				<section class="panel">
+					<header class="panel-heading">
+						<div class="panel-actions">
+							<a href="#" class="fa fa-caret-down"></a>
+							<a href="#" class="fa fa-times"></a>
+						</div>
+						<h2 class="panel-title">Weather Forecast of <span th:text="${forecast.getCityForecastByZIPResult.city}"></span></h2>
+					</header>
+					<div class="panel-body">
+						<div class="row">
+							<section class="panel">
+								<header class="panel-heading bg-white">
+									<div class="panel-heading-icon bg-primary mt-sm">
+										<i class="fa fa-rocket"></i>
+									</div>
+								</header>
+								<div class="panel-body">
+									<h3 class="text-semibold mt-none text-center"><span th:text="${forecast.getCityForecastByZIPResult.city}"></span></h3>
+									<h5 class="text-center"><span th:text="${forecast.getCityForecastByZIPResult.weatherStationCity}"></span>, <span th:text="${forecast.getCityForecastByZIPResult.state}"></span></h5>
+								</div>
+							</section>	
+						</div>
+						<div class="row">
+							<section class="panel panel-featured-left panel-featured-tertiary" th:each="result : ${forecast.getCityForecastByZIPResult.forecastResult.forecast}">
+								<div class="panel-body">
+									<div class="widget-summary">
+										<div class="widget-summary-col">
+											<div class="summary">
+												<h4 class="title"><strong><span th:text="${dateformatter.format(result.date.toGregorianCalendar().getTime())}"></span></strong></h4>
+												<div class="info">
+													<span th:text="${result.desciption}"></span>  - 
+													Temperature  : <span th:text="${result.temperatures.morningLow}"></span> - <span th:text="${result.temperatures.daytimeHigh}"></span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</section>
+						</div>
+					</div>
+					<footer class="panel-footer">
+					</footer>
+				</section>
+			</div>	
+		</div>
+	</div>
+</body>
+</html>
